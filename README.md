@@ -1,1 +1,3 @@
 # qrscanner-sandbox
+
+`pnpm i`
