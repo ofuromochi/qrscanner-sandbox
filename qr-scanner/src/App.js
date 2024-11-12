@@ -1,22 +1,33 @@
-import logo from './logo.svg';
+import React, { useState } from 'react';
 import './App.css';
 
 function App() {
+  const [isScanning, setIsScanning] = useState(false);
+
+  const startScanner = () => {
+    setIsScanning(true);
+    // ここで後ほどQRスキャナーの機能を実装します
+  };
+
   return (
     <div className="App">
       <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
+        {!isScanning ? (
+          <button 
+            onClick={startScanner}
+            className="scanner-button"
+          >
+            QR-scannerを起動
+          </button>
+        ) : (
+          <div className="scanner-container">
+            {/* ここに後ほどスキャナーのコンポーネントを追加します */}
+            <p>スキャナーを起動中...</p>
+            <button onClick={() => setIsScanning(false)}>
+              スキャナーを停止
+            </button>
+          </div>
+        )}
       </header>
     </div>
   );
