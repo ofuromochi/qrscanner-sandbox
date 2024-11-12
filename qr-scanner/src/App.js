@@ -6,20 +6,29 @@ function App() {
   const [scanResult, setScanResult] = useState(null);
   const videoRef = useRef(null);
   const [qrScanner, setQrScanner] = useState(null);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    startScanner();
-    // クリーンアップ関数
+    // カメラの許可を確認して開始
+    navigator.mediaDevices.getUserMedia({ video: true })
+      .then(() => {
+        startScanner();
+      })
+      .catch(() => {
+        // エラー処理を省略
+      });
+
     return () => {
       if (qrScanner) {
         qrScanner.stop();
         qrScanner.destroy();
       }
     };
-  }, []); // コンポーネントマウント時に1回だけ実行
+  }, []);
 
   const startScanner = async () => {
     try {
+      setError(null);
       if (!videoRef.current) return;
 
       const scanner = new QrScanner(
@@ -28,6 +37,8 @@ function App() {
           console.log('QRコードを検出:', result);
           setScanResult(result.data);
           scanner.stop();
+          scanner.destroy();
+          setQrScanner(null);
         },
         {
           returnDetailedScanResult: true,
@@ -64,7 +75,7 @@ function App() {
 
     } catch (error) {
       console.error('スキャナーエラー:', error);
-      alert('カメラの起動に失敗しました');
+      setError('');
     }
   };
 
@@ -80,7 +91,7 @@ function App() {
             <button 
               onClick={() => {
                 setScanResult(null);
-                startScanner(); // 再スキャン開始
+                startScanner();
               }}
               className="scanner-button"
             >
@@ -89,7 +100,7 @@ function App() {
           </div>
         ) : (
           <div className="scanner-container">
-            <video ref={videoRef} />
+            <video ref={videoRef} style={{ display: scanResult ? 'none' : 'block' }} />
           </div>
         )}
       </header>
